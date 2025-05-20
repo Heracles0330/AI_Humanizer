@@ -27,7 +27,7 @@ export async function signUp(email: string, password: string, fullName: string) 
             id: data.user.id,
             email: data.user.email,
             full_name: fullName,
-            credits_remaining: 100, // Starting credits for free tier
+            credits_remaining: 1000, // Starting credits for free tier
             plan_type: 'free',
           },
         ]);

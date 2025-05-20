@@ -7,13 +7,14 @@ import CreditUsage from '../components/dashboard/CreditUsage';
 import DocumentCard from '../components/dashboard/DocumentCard';
 import { useAuth } from '../lib/hooks';
 import { useHumanizedTexts } from '../lib/hooks';
-import { Plus, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Clock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { useProfile } from '../lib/hooks';
 
 const DashboardPage: React.FC = () => {
   const { user, loading } = useAuth();
   const { texts, loading: textsLoading, saveHumanizedText, deleteHumanizedText } = useHumanizedTexts();
-  
+  const { profile, updateProfile } = useProfile();
   if (loading) {
     return (
       <Layout>
@@ -28,11 +29,11 @@ const DashboardPage: React.FC = () => {
     return <Navigate to="/login" replace />;
   }
   
-  const handleSaveDocument = async (title: string) => {
-    const store = (window as any).humanizerStore;
-    if (store) {
-      const { inputText, outputText } = store.getState();
+  const handleSaveDocument = async (title: string, inputText: string, outputText: string) => {
+    if (inputText && outputText) {
       await saveHumanizedText(inputText, outputText, title);
+    } else {
+      console.error('Input or output text is missing when trying to save.');
     }
   };
   
@@ -64,12 +65,12 @@ const DashboardPage: React.FC = () => {
               <div className="lg:col-span-2">
                 <div className="card h-full">
                   <h2 className="text-xl font-semibold mb-4">AI Humanizer</h2>
-                  <HumanizerTool saveEnabled onSave={handleSaveDocument} />
+                  <HumanizerTool saveEnabled onSave={handleSaveDocument} profile={profile} updateProfile={updateProfile} />
                 </div>
               </div>
               
               <div className="lg:col-span-1">
-                <CreditUsage />
+                <CreditUsage profile={profile} updateProfile={updateProfile} />
               </div>
             </div>
             

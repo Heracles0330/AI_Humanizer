@@ -42,18 +42,23 @@ export function humanize(text: string): Promise<string> {
           "model": "v11"
         }),
       }).then((res) => res.json().then((data) => data.id));
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      const humanized =await fetch(`https://humanize.undetectable.ai/document`, {
-        method: 'POST',
-        headers: {
-          'apikey': 'dd410c04-f157-4f4c-9e41-b7d125f2b339',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "id": submitted_id
-        })
-      }).then((res) => res.json().then((data) => data.output));
-      resolve(humanized);
+      while (true) {
+        const humanized =await fetch(`https://humanize.undetectable.ai/document`, {
+          method: 'POST',
+          headers: {
+            'apikey': 'dd410c04-f157-4f4c-9e41-b7d125f2b339',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "id": submitted_id
+          })
+        }).then((res) => res.json().then((data) => data.output));
+        if (humanized) {
+          resolve(humanized);
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }, 1500); // Simulate API call delay
   });
 }

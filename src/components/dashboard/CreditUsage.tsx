@@ -1,9 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useProfile } from '../../lib/hooks';
 
-const CreditUsage: React.FC = () => {
-  const { profile } = useProfile();
+const CreditUsage: React.FC<{ profile: any; updateProfile: any }> = ({ profile, updateProfile }) => {
+  
   
   if (!profile) return null;
   

@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
-import { RefreshCw, Copy, CheckCircle, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Textarea } from '../ui/Textarea';
 import { useHumanizerStore } from '../../lib/store';
-import { useProfile } from '../../lib/hooks';
 import { humanize, calculateCreditsNeeded } from '../../lib/utils';
 
 interface HumanizerToolProps {
   saveEnabled?: boolean;
-  onSave?: (title: string) => void;
+  onSave?: (title: string, inputText: string, outputText: string) => void;
+  profile: any;
+  updateProfile: any;
 }
 
 const HumanizerTool: React.FC<HumanizerToolProps> = ({ 
   saveEnabled = false,
-  onSave
+  onSave,
+  profile,
+  updateProfile
 }) => {
   const { inputText, outputText, isProcessing, setInputText, setOutputText, setIsProcessing } = useHumanizerStore();
-  const { profile, updateProfile } = useProfile();
+  
   const [copied, setCopied] = useState(false);
   const [saveTitle, setSaveTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -72,7 +75,7 @@ const HumanizerTool: React.FC<HumanizerToolProps> = ({
     setIsSaving(true);
     
     try {
-      onSave(saveTitle || 'Untitled Document');
+      onSave(saveTitle || 'Untitled Document', inputText, outputText);
       setShowSaveDialog(false);
       setSaveTitle('');
     } catch (error) {
@@ -105,7 +108,7 @@ const HumanizerTool: React.FC<HumanizerToolProps> = ({
         
         <div className="w-full">
           <div className="mb-2 flex justify-between items-center">
-            <h3 className="font-medium text-gray-700">Humanized Text</h3>
+            <h3 className="font-medium text-gray-700 flex-shrink-0 pr-2">Humanized Text</h3>
             <div className="flex space-x-2">
               {saveEnabled && outputText && (
                 <Button
@@ -116,16 +119,7 @@ const HumanizerTool: React.FC<HumanizerToolProps> = ({
                   Save
                 </Button>
               )}
-              {outputText && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyToClipboard}
-                  leftIcon={copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                >
-                  {copied ? 'Copied' : 'Copy'}
-                </Button>
-              )}
+              
             </div>
           </div>
           <Textarea
